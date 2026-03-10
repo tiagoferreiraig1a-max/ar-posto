@@ -7,22 +7,26 @@
   </head>
   <body style="margin: 0px; overflow: hidden;">
 
-    <a-scene embedded arjs="debugUIEnabled: false;" cursor="rayOrigin: mouse" raycaster="objects: .interativo">
+    <a-scene 
+      embedded 
+      arjs="debugUIEnabled: false;" 
+      cursor="rayOrigin: mouse" 
+      raycaster="objects: .clicavel">
       
       <a-marker preset="hiro">
         <a-entity rotation="-90 0 0">
           
-          <a-entity id="robot" class="interativo" position="0 1 0.5"
-                    animation__click="property: scale; from: 1 1 1; to: 1.2 1.2 1.2; dur: 200; startEvents: click; dir: alternate; loop: 1">
+          <a-entity id="robot" class="clicavel" position="0 1 0.5">
             
-            <a-box width="0.5" height="0.5" depth="0.5" color="#0054a6">
-              <a-text value="TOCA-ME" position="0 0.4 0.3" align="center" width="3"></a-text>
+            <a-box width="0.6" height="0.6" depth="0.6" color="#0054a6"
+                   animation__click="property: scale; from: 1 1 1; to: 1.3 1.3 1.3; dur: 150; startEvents: click">
+              <a-text value="TOCA AQUI" position="0 0.5 0.35" align="center" width="4" color="white"></a-text>
             </a-box>
             
-            <a-cylinder position="0 -0.4 0" radius="0.2" height="0.6" color="#333"></a-cylinder>
+            <a-cylinder position="0 -0.5 0" radius="0.2" height="0.7" color="#333"></a-cylinder>
           </a-entity>
 
-          <a-text id="feedback" value="AGUARDANDO INTERACAO" position="0 2 0.1" align="center" width="4"></a-text>
+          <a-text id="mensagem" value="CLICA NO ROBOT" position="0 2.2 0.1" align="center" width="5" color="yellow"></a-text>
 
         </a-entity>
       </a-marker>
@@ -31,19 +35,27 @@
     </a-scene>
 
     <script>
-      // Lógica para mudar a cor quando clicas
       const robot = document.querySelector('#robot');
-      const feedback = document.querySelector('#feedback');
+      const mensagem = document.querySelector('#mensagem');
 
-      robot.addEventListener('click', function () {
-        // Mudar cor para uma cor aleatória
-        const cores = ['#ff0000', '#00ff00', '#ffaa00', '#ffffff'];
-        const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
+      // Função para mudar o estado
+      function dispararInteracao() {
+        const cores = ['#FF5733', '#33FF57', '#3357FF', '#F333FF'];
+        const corRandom = cores[Math.floor(Math.random() * cores.length)];
         
-        this.querySelector('a-box').setAttribute('color', corAleatoria);
-        feedback.setAttribute('value', 'INTERACAO DETETADA!');
-        feedback.setAttribute('color', corAleatoria);
-      });
+        // Seleciona a caixa do robot e muda a cor
+        robot.querySelector('a-box').setAttribute('color', corRandom);
+        
+        // Atualiza o texto
+        mensagem.setAttribute('value', 'MAQUINA OK! (SINAL RECEBIDO)');
+        mensagem.setAttribute('color', '#00ff00');
+        
+        console.log("Toque detetado com sucesso!");
+      }
+
+      // Escuta tanto cliques de rato como toques no ecrã
+      robot.addEventListener('click', dispararInteracao);
+      robot.addEventListener('touchstart', dispararInteracao);
     </script>
   </body>
 </html>
