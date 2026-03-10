@@ -14,7 +14,6 @@
         text-decoration: none; font-family: sans-serif; font-weight: bold;
         font-size: 12px; border: 2px solid white; width: 45%; text-align: center;
       }
-      /* Instrução visual para o utilizador */
       #instrucao {
         position: fixed; top: 10px; width: 100%; text-align: center;
         color: white; font-family: sans-serif; z-index: 10000;
@@ -24,32 +23,41 @@
   </head>
   <body style="margin: 0px; overflow: hidden;">
 
-    <div id="instrucao">TOQUE NO ROBOT/TABELA PARA DAR ZOOM</div>
+    <div id="instrucao">A CARREGAR SISTEMA LECTRA...</div>
 
     <div class="ui-container">
-      <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQBZ4crRwZi5SaPNlrUXaOALAVlLRyl3zO363RnZ_VMHLwY?e=VBQuEb" class="btn">📄 PROCESSO</a>
-      <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQA9Uee78FoEQ72zJRhF0MdPAVxAdLq_bJMxkuiPU3iWaks?e=HWBJTo" class="btn" style="background: #d32f2f;">⚠️ RISCOS</a>
+      <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQBZ4crRwZi5SaPNlrUXaOALAVlLRyl3zO363RnZ_VMHLwY?e=VBQuEb" target="_blank" class="btn">📄 PROCESSO</a>
+      <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQA9Uee78FoEQ72zJRhF0MdPAVxAdLq_bJMxkuiPU3iWaks?e=HWBJTo" target="_blank" class="btn" style="background: #d32f2f;">⚠️ RISCOS</a>
     </div>
 
-    <a-scene embedded arjs="debugUIEnabled: false; trackingMethod: best;" cursor="rayOrigin: mouse" raycaster="objects: .clicavel">
+    <a-scene 
+      embedded 
+      arjs="debugUIEnabled: false; trackingMethod: best; smooth: true; smoothCount: 15; smoothThreshold: 5;" 
+      renderer="logarithmicDepthBuffer: true; antialias: true; precision: high;"
+      cursor="rayOrigin: mouse" 
+      raycaster="objects: .clicavel">
       
       <a-assets>
         <img id="tabela-risco" src="tabela_lectra.png">
       </a-assets>
 
-      <a-marker preset="hiro" id="marcador">
-        <a-entity rotation="-90 0 0">
+      <a-marker preset="hiro" id="marcador" smooth="true" smoothCount="15">
+        <a-entity id="conteudo-principal" rotation="-90 0 0" scale="0 0 0"
+                  animation="property: scale; to: 1 1 1; dur: 800; easing: easeOutElastic; startEvents: targetFound">
           
           <a-entity id="main-panel">
-            <a-plane position="0 1.2 0.01" width="3.5" height="0.7" color="#1a1a1a"></a-plane>
+            <a-plane position="0 1.2 0.01" width="3.5" height="0.7" color="#1a1a1a" material="opacity: 0"
+                     animation="property: material.opacity; to: 0.9; dur: 1000; startEvents: targetFound"></a-plane>
             <a-text value="LECTRA FX" position="0 1.3 0.1" align="center" width="8" color="#FFD700"></a-text>
           </a-entity>
 
           <a-entity id="tabela-container" class="clicavel" position="3.2 1.2 0.2">
             <a-plane width="4" height="3" opacity="0" class="clicavel"></a-plane>
             
-            <a-image src="#tabela-risco" width="3" height="2.2" position="0 0 0.1"></a-image>
-            <a-rect width="3.1" height="2.3" position="0 0 0.05" color="#d32f2f" opacity="0.6"></a-rect>
+            <a-image id="img-fade" src="#tabela-risco" width="3" height="2.2" position="0 0 0.1" material="opacity: 0"
+                     animation="property: material.opacity; to: 1; dur: 1200; startEvents: targetFound"></a-image>
+            
+            <a-rect width="3.1" height="2.3" position="0 0 0.05" color="#d32f2f" opacity="0"></a-rect>
           </a-entity>
 
         </a-entity>
@@ -64,18 +72,32 @@
       const tabela = document.querySelector('#tabela-container');
       const mainPanel = document.querySelector('#main-panel');
       const instrucao = document.querySelector('#instrucao');
+      const conteudo = document.querySelector('#conteudo-principal');
+      const marcador = document.querySelector('#marcador');
       let zoomed = false;
+
+      // Disparar animações de entrada quando o marcador é encontrado
+      marcador.addEventListener('markerFound', () => {
+        conteudo.emit('targetFound');
+        instrucao.innerText = "MARCADOR DETETADO: TOQUE NA TABELA";
+        instrucao.style.color = "white";
+      });
+
+      marcador.addEventListener('markerLost', () => {
+        instrucao.innerText = "APONTE PARA O MARCADOR HIRO";
+        instrucao.style.color = "red";
+        // Resetar escala para re-animar na próxima vez
+        conteudo.setAttribute('scale', '0 0 0');
+      });
 
       function executarZoom() {
         if (!zoomed) {
-          // ZOOM IN - Traz para a frente da câmara
           tabela.setAttribute('animation', 'property: position; to: 0 1.2 2; dur: 400; easing: easeOutCubic');
           tabela.setAttribute('animation__scale', 'property: scale; to: 2 2 2; dur: 400');
           mainPanel.setAttribute('visible', 'false');
           instrucao.innerText = "TOQUE NOVAMENTE PARA SAIR";
           zoomed = true;
         } else {
-          // ZOOM OUT - Volta para a lateral
           tabela.setAttribute('animation', 'property: position; to: 3.2 1.2 0.2; dur: 400; easing: easeOutCubic');
           tabela.setAttribute('animation__scale', 'property: scale; to: 1 1 1; dur: 400');
           mainPanel.setAttribute('visible', 'true');
@@ -84,23 +106,8 @@
         }
       }
 
-      // Tenta detetar o clique de todas as formas possíveis
       tabela.addEventListener('mousedown', executarZoom);
-      tabela.addEventListener('touchstart', function(e) {
-        e.preventDefault();
-        executarZoom();
-      });
-
-      // Feedback visual: se o marcador for perdido, avisa
-      const marcador = document.querySelector('#marcador');
-      marcador.addEventListener('markerLost', () => {
-        instrucao.innerText = "APONTE PARA O MARCADOR HIRO";
-        instrucao.style.color = "red";
-      });
-      marcador.addEventListener('markerFound', () => {
-        instrucao.innerText = "MARCADOR DETETADO: TOQUE NA TABELA";
-        instrucao.style.color = "white";
-      });
+      tabela.addEventListener('touchstart', (e) => { e.preventDefault(); executarZoom(); });
     </script>
   </body>
 </html>
