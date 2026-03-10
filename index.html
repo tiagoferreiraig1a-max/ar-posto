@@ -6,30 +6,43 @@
     <style>
       .button-container {
         position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-        z-index: 999; width: 80%; text-align: center;
+        z-index: 999; width: 85%; text-align: center;
       }
       .btn-link {
-        padding: 20px; background: #007bff; color: white; border-radius: 10px;
-        text-decoration: none; font-family: sans-serif; font-weight: bold; display: block;
+        padding: 18px; background: #0054a6; color: white; border-radius: 5px;
+        text-decoration: none; font-family: sans-serif; font-weight: bold; 
+        display: block; border: 2px solid #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
       }
     </style>
   </head>
   <body style="margin: 0px; overflow: hidden;">
     <div class="button-container">
-      <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQDrswzwMMnsTbUOvBXSKiwtARRAY1eGKKldgIpfZOVvyrA?e=NiPJS9" class="btn-link">ABRIR MANUAL TÉCNICO</a>
+      <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQDrswzwMMnsTbUOvBXSKiwtARRAY1eGKKldgIpfZOVvyrA?e=NiPJS9" target="_blank" class="btn-link">
+        📖 Descrição do processo
+      </a>
     </div>
 
     <a-scene embedded arjs="debugUIEnabled: false;">
       <a-marker preset="hiro">
         
-        <a-plane position="0 1 0" rotation="0 0 0" width="2.5" height="1.2" color="#000"></a-plane>
+        <a-plane position="0 1.2 0" rotation="0 0 0" width="3.8" height="2.4" color="#1a1a1a" opacity="0.95"></a-plane>
         
-        <a-text value="INFO POSTO A1\nESTADO: OPERACIONAL" 
-                position="0 1 0.1" rotation="0 0 0" color="#00FF00" 
-                align="center" width="6" font="mozillavr"></a-text>
+        <a-plane position="0 2.3 0.05" width="3.8" height="0.4" color="#0054a6"></a-plane>
+        <a-text value="DURKOPP ADLER | SAP ID: 123456" position="0 2.3 0.1" 
+                color="#fff" align="center" width="5.5" font="mozillavr"></a-text>
 
-        <a-sphere position="0 1.8 0" radius="0.1" color="blue"
-                  animation="property: scale; to: 1.5 1.5 1.5; dir: alternate; dur: 500; loop: true">
+        <a-text value="EQUIPAMENTO:\n- Classe: 867-M TYPE\n- Motor: Direct Drive\n- Agulha: NM 110-140\n- Linha: 10/3 a 80/3" 
+                position="-1.7 1.3 0.1" color="#fff" align="left" width="4"></a-text>
+
+        <a-text value="CONTROLO SAP:\n- Ativo: 123456\n- Oleo: NIVEL OK\n- Ar: 6 BAR OK\n- STATUS: OPERACIONAL" 
+                position="0.3 1.3 0.1" color="#5cdb5c" align="left" width="4"></a-text>
+
+        <a-plane position="0 0.45 0.05" width="3.6" height="0.3" color="#ff6600"></a-plane>
+        <a-text value="AVISO: MANTER PROTECAO DE DEDOS ATIVA" 
+                position="0 0.45 0.1" color="#fff" align="center" width="3.5"></a-text>
+
+        <a-sphere position="1.6 2.3 0.15" radius="0.12" color="#00ff00"
+                  animation="property: material.opacity; from: 1; to: 0.2; dir: alternate; dur: 500; loop: true">
         </a-sphere>
 
       </a-marker>
