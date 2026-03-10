@@ -2,20 +2,10 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Lectra FX - Estabilidade de Escala</title>
+    <title>Lectra FX - Interface Holográfica Final</title>
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <style>
-      .ui-container {
-        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-        width: 90%; z-index: 9999; display: flex; justify-content: space-between;
-      }
-      .btn {
-        padding: 15px 10px; background: #0054a6; color: white !important; border-radius: 8px;
-        text-decoration: none; font-family: sans-serif; font-weight: bold;
-        font-size: 12px; border: 2px solid white; width: 45%; text-align: center;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      }
       #instrucao {
         position: fixed; top: 10px; width: 100%; text-align: center;
         color: white; font-family: sans-serif; z-index: 10000;
@@ -25,46 +15,69 @@
   </head>
   <body style="margin: 0px; overflow: hidden;">
 
-    <div id="instrucao">A PROCURAR LECTRA FX...</div>
-
-    <div class="ui-container">
-      <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQBZ4crRwZi5SaPNlrUXaOALAVlLRyl3zO363RnZ_VMHLwY?e=VBQuEb" target="_blank" class="btn">📄 PROCESSO</a>
-      <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQA9Uee78FoEQ72zJRhF0MdPAVxAdLq_bJMxkuiPU3iWaks?e=HWBJTo" target="_blank" class="btn" style="background: #d32f2f;">⚠️ RISCOS</a>
-    </div>
+    <div id="instrucao">APONTE PARA O MARCADOR HIRO</div>
 
     <a-scene 
       embedded 
-      arjs="trackingMethod: best; debugUIEnabled: false; smooth: true; smoothCount: 15; smoothThreshold: 5;" 
-      renderer="logarithmicDepthBuffer: true; antialias: true; precision: high;"
+      arjs="trackingMethod: best; debugUIEnabled: false; smooth: true; smoothCount: 15;" 
+      renderer="logarithmicDepthBuffer: true; antialias: true;"
       cursor="rayOrigin: mouse" 
       raycaster="objects: .clicavel">
       
       <a-assets>
         <img id="tabela-risco" src="tabela_lectra.png" crossorigin="anonymous">
+        <video id="video-tutorial" src="tutorial_lectra.mp4" preload="auto" loop="true" playsinline webkit-playsinline crossorigin="anonymous"></video>
+        
+        <img id="img-icone-risco" src="icone_risco.png" crossorigin="anonymous">
+        <img id="img-icone-video" src="icone_video.png" crossorigin="anonymous">
+        <img id="img-icone-engrenagem" src="icone_engrenagem.png" crossorigin="anonymous">
+
+        <audio id="som-click" src="https://actions.google.com/sounds/v1/foley/button_click.ogg" crossorigin="anonymous"></audio>
       </a-assets>
 
       <a-marker preset="hiro" id="marcador">
-        <a-entity id="conteudo-principal" rotation="-90 0 0" visible="false" scale="1 1 1">
+        <a-entity id="conteudo" rotation="-90 0 0" visible="false">
           
-          <a-entity id="main-panel">
-            <a-plane position="0 2.2 0.01" width="3.5" height="0.6" color="#1a1a1a" opacity="0.9"></a-plane>
-            <a-text value="LECTRA FX" position="0 2.2 0.1" align="center" width="8" color="#FFD700"></a-text>
+          <a-text value="ASSISTENTE LECTRA FX" position="0 2.8 0" align="center" width="7" color="#FFD700" font="mozillavr"></a-text>
+
+          <a-entity id="robot" position="-2.2 0.8 0"
+                    animation="property: position; to: -2.2 0.9 0; dir: alternate; dur: 2000; loop: true; easing: easeInOutSine">
+            <a-box width="0.4" height="0.5" depth="0.4" color="#0054a6"></a-box>
+            <a-sphere position="0 0.4 0" radius="0.2" color="#ddd"></a-sphere>
+            <a-cylinder position="0 -0.3 0" radius="0.12" height="0.5" color="#333"></a-cylinder>
+            <a-sphere position="0.08 0.45 0.15" radius="0.03" color="cyan"></a-sphere>
+            <a-sphere position="-0.08 0.45 0.15" radius="0.03" color="cyan"></a-sphere>
           </a-entity>
 
-          <a-entity id="tabela-container" class="clicavel" position="0 0.2 0.2">
-            <a-text value="Maior Risco associado" position="0 1.4 0.1" align="center" width="5" color="#FF3333"></a-text>
+          <a-entity id="menu" position="-1.3 0.8 0.5">
             
-            <a-plane width="3.5" height="3" opacity="0" class="clicavel"></a-plane>
-            <a-image src="#tabela-risco" width="3.2" height="2.2" position="0 0 0.1"></a-image>
-            <a-rect width="3.3" height="2.3" position="0 0 0.05" color="#d32f2f" opacity="0.6"></a-rect>
-            
-            <a-text value="TOQUE PARA AMPLIAR" position="0 -1.3 0.1" align="center" width="3.5" color="#FFF"></a-text>
+            <a-sphere class="clicavel" id="btn-riscos" position="0 0.9 0" radius="0.35" color="#ffffff" opacity="0.7"
+                      animation="property: position; to: 0 1.05 0; dir: alternate; dur: 1400; loop: true; easing: easeInOutQuad">
+                <a-image src="#img-icone-risco" width="0.45" height="0.45" position="0 0 0.1"></a-image>
+            </a-sphere>
+
+            <a-sphere class="clicavel" id="btn-video" position="0 0 0" radius="0.35" color="#ffffff" opacity="0.7"
+                      animation="property: position; to: 0 0.15 0; dir: alternate; dur: 1800; loop: true; easing: easeInOutQuad">
+                <a-image src="#img-icone-video" width="0.45" height="0.45" position="0 0 0.1"></a-image>
+            </a-sphere>
+
+            <a-sphere class="clicavel" id="btn-processo" position="0 -0.9 0" radius="0.35" color="#ffffff" opacity="0.7"
+                      animation="property: position; to: 0 -0.75 0; dir: alternate; dur: 2300; loop: true; easing: easeInOutQuad">
+                <a-image src="#img-icone-engrenagem" width="0.45" height="0.45" position="0 0 0.1"></a-image>
+            </a-sphere>
           </a-entity>
 
-          <a-sphere position="1.5 2.2 0.2" radius="0.08" color="#00ff00"
-                    material="emissive: #00ff00; emissiveIntensity: 1"
-                    animation="property: material.emissiveIntensity; from: 0.5; to: 2; dir: alternate; dur: 800; loop: true">
-          </a-sphere>
+          <a-entity id="display" position="1.8 0.8 0.2">
+            <a-image id="view-tabela" src="#tabela-risco" width="3.5" height="2.4" visible="false"
+                     animation="property: scale; from: 0 0 0; to: 1 1 1; dur: 500; startEvents: mostrar"></a-image>
+            
+            <a-video id="view-video" src="#video-tutorial" width="3.5" height="2" visible="false"
+                     animation="property: scale; from: 0 0 0; to: 1 1 1; dur: 500; startEvents: mostrar"></a-video>
+
+            <a-plane position="0 -1.8 0" width="3.5" height="0.6" color="#1a1a1a" opacity="0.85">
+                <a-text id="feedback-txt" value="SELECIONE UMA OPCAO NO ASSISTENTE" position="0 0 0.05" align="center" width="3.5" color="yellow"></a-text>
+            </a-plane>
+          </a-entity>
 
         </a-entity>
       </a-marker>
@@ -74,50 +87,61 @@
 
     <script>
       const marcador = document.querySelector('#marcador');
-      const conteudo = document.querySelector('#conteudo-principal');
-      const tabela = document.querySelector('#tabela-container');
-      const mainPanel = document.querySelector('#main-panel');
+      const conteudo = document.querySelector('#conteudo');
+      const vTabela = document.querySelector('#view-tabela');
+      const vVideo = document.querySelector('#view-video');
+      const vVideoEl = document.querySelector('#video-tutorial');
+      const feedback = document.querySelector('#feedback-txt');
+      const somClick = document.querySelector('#som-click');
       const instrucao = document.querySelector('#instrucao');
-      let zoomed = false;
 
+      // Mostrar/Esconder sistema completo
       marcador.addEventListener('markerFound', () => {
-        // Em vez de animar escala, apenas tornamos visível e garantimos escala 1
         conteudo.setAttribute('visible', 'true');
-        conteudo.setAttribute('scale', '1 1 1'); 
-        
-        instrucao.innerText = "SISTEMA LECTRA FX ATIVO";
-        instrucao.style.color = "#00ff00";
+        instrucao.innerText = "LECTRA FX DETETADA";
       });
 
       marcador.addEventListener('markerLost', () => {
         conteudo.setAttribute('visible', 'false');
-        instrucao.innerText = "A PROCURAR LECTRA FX...";
-        instrucao.style.color = "white";
-        if(zoomed) { resetZoom(); }
+        vVideoEl.pause();
+        instrucao.innerText = "APONTE PARA O MARCADOR HIRO";
       });
 
-      function resetZoom() {
-          tabela.removeAttribute('animation__zoom');
-          tabela.removeAttribute('animation__scalesize');
-          tabela.setAttribute('position', '0 0.2 0.2');
-          tabela.setAttribute('scale', '1 1 1');
-          mainPanel.setAttribute('visible', 'true');
-          zoomed = false;
+      function resetDisplay() {
+        vTabela.setAttribute('visible', 'false');
+        vVideo.setAttribute('visible', 'false');
+        vVideoEl.pause();
+        // Som de clique
+        somClick.currentTime = 0;
+        somClick.play();
       }
 
-      function executarZoom() {
-        if (!zoomed) {
-          tabela.setAttribute('animation__zoom', 'property: position; to: 0 1 1.2; dur: 400; easing: easeOutQuad');
-          tabela.setAttribute('animation__scalesize', 'property: scale; to: 1.8 1.8 1.8; dur: 400');
-          mainPanel.setAttribute('visible', 'false');
-          zoomed = true;
-        } else {
-          resetZoom();
-        }
-      }
+      // Eventos dos Balões
+      document.querySelector('#btn-riscos').addEventListener('click', () => {
+        resetDisplay();
+        vTabela.setAttribute('visible', 'true');
+        vTabela.emit('mostrar');
+        feedback.setAttribute('value', 'EXIBINDO: TABELA DE RISCOS');
+        feedback.setAttribute('color', '#FF3333');
+      });
 
-      tabela.addEventListener('mousedown', executarZoom);
-      tabela.addEventListener('touchstart', (e) => { e.preventDefault(); executarZoom(); });
+      document.querySelector('#btn-video').addEventListener('click', () => {
+        resetDisplay();
+        vVideo.setAttribute('visible', 'true');
+        vVideo.emit('mostrar');
+        vVideoEl.play();
+        feedback.setAttribute('value', 'EXIBINDO: VIDEO TUTORIAL');
+        feedback.setAttribute('color', '#33CCFF');
+      });
+
+      document.querySelector('#btn-processo').addEventListener('click', () => {
+        resetDisplay();
+        feedback.setAttribute('value', 'ABRINDO PROCESSO (PDF)...');
+        feedback.setAttribute('color', '#33FF33');
+        setTimeout(() => {
+          window.open('https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQBZ4crRwZi5SaPNlrUXaOALAVlLRyl3zO363RnZ_VMHLwY?e=VBQuEb', '_blank');
+        }, 500);
+      });
     </script>
   </body>
 </html>
