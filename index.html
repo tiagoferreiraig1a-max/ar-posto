@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Lectra FX - Estabilidade de Escala</title>
+    <title>Lectra FX - Marcador Personalizado</title>
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <style>
@@ -25,7 +25,7 @@
   </head>
   <body style="margin: 0px; overflow: hidden;">
 
-    <div id="instrucao">A PROCURAR LECTRA FX...</div>
+    <div id="instrucao">A PROCURAR LOGO LECTRA...</div>
 
     <div class="ui-container">
       <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQBZ4crRwZi5SaPNlrUXaOALAVlLRyl3zO363RnZ_VMHLwY?e=VBQuEb" target="_blank" class="btn">📄 PROCESSO</a>
@@ -43,7 +43,8 @@
         <img id="tabela-risco" src="tabela_lectra.png" crossorigin="anonymous">
       </a-assets>
 
-      <a-marker preset="hiro" id="marcador">
+      <a-marker type="pattern" url="pattern-Lectra-Logo-300x150.patt" id="marcador">
+        
         <a-entity id="conteudo-principal" rotation="-90 0 0" visible="false" scale="1 1 1">
           
           <a-entity id="main-panel">
@@ -81,17 +82,15 @@
       let zoomed = false;
 
       marcador.addEventListener('markerFound', () => {
-        // Em vez de animar escala, apenas tornamos visível e garantimos escala 1
         conteudo.setAttribute('visible', 'true');
         conteudo.setAttribute('scale', '1 1 1'); 
-        
         instrucao.innerText = "SISTEMA LECTRA FX ATIVO";
         instrucao.style.color = "#00ff00";
       });
 
       marcador.addEventListener('markerLost', () => {
         conteudo.setAttribute('visible', 'false');
-        instrucao.innerText = "A PROCURAR LECTRA FX...";
+        instrucao.innerText = "A PROCURAR LOGO LECTRA...";
         instrucao.style.color = "white";
         if(zoomed) { resetZoom(); }
       });
