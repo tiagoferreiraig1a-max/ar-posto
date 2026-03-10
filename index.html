@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Lectra FX - Marcador Personalizado</title>
+    <title>Lectra FX - Dashboard Responsivo</title>
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <style>
@@ -13,19 +13,20 @@
       .btn {
         padding: 15px 10px; background: #0054a6; color: white !important; border-radius: 8px;
         text-decoration: none; font-family: sans-serif; font-weight: bold;
-        font-size: 12px; border: 2px solid white; width: 45%; text-align: center;
+        font-size: 11px; border: 2px solid white; width: 46%; text-align: center;
         box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        text-transform: uppercase;
       }
       #instrucao {
         position: fixed; top: 10px; width: 100%; text-align: center;
         color: white; font-family: sans-serif; z-index: 10000;
-        text-shadow: 2px 2px 4px #000; font-weight: bold;
+        text-shadow: 2px 2px 4px #000; font-weight: bold; font-size: 14px;
       }
     </style>
   </head>
   <body style="margin: 0px; overflow: hidden;">
 
-    <div id="instrucao">A PROCURAR LOGO LECTRA...</div>
+    <div id="instrucao">A PROCURAR LOGOTIPO LECTRA...</div>
 
     <div class="ui-container">
       <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQBZ4crRwZi5SaPNlrUXaOALAVlLRyl3zO363RnZ_VMHLwY?e=VBQuEb" target="_blank" class="btn">📄 PROCESSO</a>
@@ -45,24 +46,26 @@
 
       <a-marker type="pattern" url="pattern-Lectra-Logo-300x150.patt" id="marcador">
         
-        <a-entity id="conteudo-principal" rotation="-90 0 0" visible="false" scale="1 1 1">
+        <a-entity id="conteudo-principal" rotation="-90 0 0" visible="false">
           
           <a-entity id="main-panel">
-            <a-plane position="0 2.2 0.01" width="3.5" height="0.6" color="#1a1a1a" opacity="0.9"></a-plane>
-            <a-text value="LECTRA FX" position="0 2.2 0.1" align="center" width="8" color="#FFD700"></a-text>
+            <a-plane position="0 2.1 0.01" width="3" height="0.5" color="#1a1a1a" opacity="0.9"></a-plane>
+            <a-text value="LECTRA FX" position="0 2.1 0.1" align="center" width="7" color="#FFD700"></a-text>
           </a-entity>
 
           <a-entity id="tabela-container" class="clicavel" position="0 0.2 0.2">
-            <a-text value="Maior Risco associado" position="0 1.4 0.1" align="center" width="5" color="#FF3333"></a-text>
+            <a-text value="Maior Risco associado" position="0 1.3 0.1" align="center" width="4.5" color="#FF3333"></a-text>
             
-            <a-plane width="3.5" height="3" opacity="0" class="clicavel"></a-plane>
-            <a-image src="#tabela-risco" width="3.2" height="2.2" position="0 0 0.1"></a-image>
-            <a-rect width="3.3" height="2.3" position="0 0 0.05" color="#d32f2f" opacity="0.6"></a-rect>
+            <a-plane width="3.2" height="2.8" opacity="0" class="clicavel"></a-plane>
             
-            <a-text value="TOQUE PARA AMPLIAR" position="0 -1.3 0.1" align="center" width="3.5" color="#FFF"></a-text>
+            <a-image src="#tabela-risco" width="2.9" height="2.1" position="0 0 0.1"></a-image>
+            
+            <a-rect width="3.0" height="2.2" position="0 0 0.05" color="#d32f2f" opacity="0.6"></a-rect>
+            
+            <a-text value="TOQUE PARA ZOOM" position="0 -1.2 0.1" align="center" width="3.2" color="#FFF"></a-text>
           </a-entity>
 
-          <a-sphere position="1.5 2.2 0.2" radius="0.08" color="#00ff00"
+          <a-sphere position="1.3 2.1 0.2" radius="0.07" color="#00ff00"
                     material="emissive: #00ff00; emissiveIntensity: 1"
                     animation="property: material.emissiveIntensity; from: 0.5; to: 2; dir: alternate; dur: 800; loop: true">
           </a-sphere>
@@ -84,13 +87,13 @@
       marcador.addEventListener('markerFound', () => {
         conteudo.setAttribute('visible', 'true');
         conteudo.setAttribute('scale', '1 1 1'); 
-        instrucao.innerText = "SISTEMA LECTRA FX ATIVO";
+        instrucao.innerText = "LECTRA FX DETETADA";
         instrucao.style.color = "#00ff00";
       });
 
       marcador.addEventListener('markerLost', () => {
         conteudo.setAttribute('visible', 'false');
-        instrucao.innerText = "A PROCURAR LOGO LECTRA...";
+        instrucao.innerText = "A PROCURAR LOGOTIPO LECTRA...";
         instrucao.style.color = "white";
         if(zoomed) { resetZoom(); }
       });
@@ -98,6 +101,7 @@
       function resetZoom() {
           tabela.removeAttribute('animation__zoom');
           tabela.removeAttribute('animation__scalesize');
+          // Posição original segura abaixo do título
           tabela.setAttribute('position', '0 0.2 0.2');
           tabela.setAttribute('scale', '1 1 1');
           mainPanel.setAttribute('visible', 'true');
@@ -106,8 +110,9 @@
 
       function executarZoom() {
         if (!zoomed) {
-          tabela.setAttribute('animation__zoom', 'property: position; to: 0 1 1.2; dur: 400; easing: easeOutQuad');
-          tabela.setAttribute('animation__scalesize', 'property: scale; to: 1.8 1.8 1.8; dur: 400');
+          // Aproximação no eixo Z para preencher o ecrã sem distorcer lateralmente
+          tabela.setAttribute('animation__zoom', 'property: position; to: 0 0.6 1.1; dur: 450; easing: easeOutQuad');
+          tabela.setAttribute('animation__scalesize', 'property: scale; to: 1.15 1.15 1.15; dur: 450');
           mainPanel.setAttribute('visible', 'false');
           zoomed = true;
         } else {
@@ -115,8 +120,12 @@
         }
       }
 
+      // Suporte para clique em PC e toque em Smartphone
       tabela.addEventListener('mousedown', executarZoom);
-      tabela.addEventListener('touchstart', (e) => { e.preventDefault(); executarZoom(); });
+      tabela.addEventListener('touchstart', (e) => { 
+        e.preventDefault(); 
+        executarZoom(); 
+      });
     </script>
   </body>
 </html>
