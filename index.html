@@ -11,7 +11,7 @@
       .btn-link {
         padding: 18px; background: #0054a6; color: white; border-radius: 5px;
         text-decoration: none; font-family: sans-serif; font-weight: bold; 
-        display: block; border: 2px solid #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        display: block; border: 2px solid #ffffff;
       }
     </style>
   </head>
@@ -25,25 +25,26 @@
     <a-scene embedded arjs="debugUIEnabled: false;">
       <a-marker preset="hiro">
         
-        <a-plane position="0 1.2 0" rotation="0 0 0" width="3.8" height="2.4" color="#1a1a1a" opacity="0.95"></a-plane>
-        
-        <a-plane position="0 2.3 0.05" width="3.8" height="0.4" color="#0054a6"></a-plane>
-        <a-text value="DURKOPP ADLER | SAP ID: 123456" position="0 2.3 0.1" 
-                color="#fff" align="center" width="5.5" font="mozillavr"></a-text>
+        <a-entity rotation="-90 0 0" position="0 0 0">
+          
+          <a-plane position="0 1.2 0" width="3.8" height="2.4" color="#1a1a1a" opacity="0.95"></a-plane>
+          
+          <a-plane position="0 2.2 0.02" width="3.8" height="0.4" color="#0054a6"></a-plane>
+          <a-text value="DURKOPP ADLER | SAP ID: 123456" position="0 2.2 0.05" 
+                  color="#fff" align="center" width="5.5"></a-text>
 
-        <a-text value="EQUIPAMENTO:\n- Classe: 867-M TYPE\n- Motor: Direct Drive\n- Agulha: NM 110-140\n- Linha: 10/3 a 80/3" 
-                position="-1.7 1.3 0.1" color="#fff" align="left" width="4"></a-text>
+          <a-text value="EQUIPAMENTO:\n- Classe: 867-M TYPE\n- Agulha: NM 110-140\n\nSTATUS SAP:\n- Ativo: 123456\n- STATUS: OPERACIONAL" 
+                  position="-1.7 1.2 0.05" color="#fff" align="left" width="4"></a-text>
 
-        <a-text value="CONTROLO SAP:\n- Ativo: 123456\n- Oleo: NIVEL OK\n- Ar: 6 BAR OK\n- STATUS: OPERACIONAL" 
-                position="0.3 1.3 0.1" color="#5cdb5c" align="left" width="4"></a-text>
+          <a-sphere position="1.6 2.2 0.1" radius="0.12" color="#00ff00"
+                    animation="property: material.opacity; from: 1; to: 0.3; dir: alternate; dur: 500; loop: true">
+          </a-sphere>
 
-        <a-plane position="0 0.45 0.05" width="3.6" height="0.3" color="#ff6600"></a-plane>
-        <a-text value="AVISO: MANTER PROTECAO DE DEDOS ATIVA" 
-                position="0 0.45 0.1" color="#fff" align="center" width="3.5"></a-text>
+          <a-plane position="0 0.3 0.02" width="3.6" height="0.3" color="#ff6600"></a-plane>
+          <a-text value="AVISO: MANTER PROTECAO DE DEDOS ATIVA" 
+                  position="0 0.3 0.05" color="#fff" align="center" width="3.5"></a-text>
 
-        <a-sphere position="1.6 2.3 0.15" radius="0.12" color="#00ff00"
-                  animation="property: material.opacity; from: 1; to: 0.2; dir: alternate; dur: 500; loop: true">
-        </a-sphere>
+        </a-entity>
 
       </a-marker>
       <a-entity camera></a-entity>
