@@ -4,60 +4,37 @@
     <meta charset="utf-8">
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <style>
-      .button-container {
-        position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
-        width: 80%; max-width: 350px; z-index: 9999; text-align: center;
-      }
-      .btn-link {
-        display: block; padding: 16px; background: #0054a6; color: #fff !important;
-        text-decoration: none; font-family: sans-serif; font-weight: bold;
-        border-radius: 10px; border: 2px solid #ffffff; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      }
-    </style>
+    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
   </head>
   <body style="margin: 0px; overflow: hidden;">
-    
-    <div class="button-container">
-      <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQDrswzwMMnsTbUOvBXSKiwtARRAY1eGKKldgIpfZOVvyrA?e=NiPJS9" target="_blank" class="btn-link">
-        📖 MANUAL PROCESSO
-      </a>
-    </div>
 
-    <a-scene embedded arjs="debugUIEnabled: false;" renderer="logarithmicDepthBuffer: true; antialias: true;">
+    <a-scene embedded arjs="debugUIEnabled: false; trackingMethod: best; smooth: true; smoothCount: 10;" 
+             renderer="logarithmicDepthBuffer: true;">
       
       <a-marker preset="hiro">
-        <a-entity rotation="-90 0 0" position="0 0 0"
-                  animation="property: scale; from: 0 0 0; to: 1 1 1; dur: 800; easing: easeOutBack">
+        <a-entity rotation="-90 0 0">
           
-          <a-plane position="0 1.2 0.01" width="3.8" height="2.4" color="#1a1a1a" opacity="0.95"></a-plane>
-          
-          <a-plane position="0 2.2 0.05" width="3.8" height="0.4" color="#0054a6"></a-plane>
+          <a-plane position="0 1.2 0" width="3.5" height="2" color="#1a1a1a" opacity="0.9"></a-plane>
 
-          <a-text value="DURKOPP ADLER | SAP: 123456" position="0 2.2 0.2" 
-                  align="center" width="5.5" color="#FFFFFF" font="roboto"></a-text>
+          <a-entity id="robot-assistente" 
+                    position="1.8 1.2 0.5" 
+                    look-at="[camera]"
+                    animation="property: position; from: 1.8 1.1 0.5; to: 1.8 1.3 0.5; dir: alternate; dur: 2000; loop: true; easing: easeInOutSine">
+            
+            <a-box width="0.4" height="0.4" depth="0.4" color="#0054a6">
+              <a-sphere position="-0.1 0.1 0.21" radius="0.05" color="#00ff00"></a-sphere>
+              <a-sphere position="0.1 0.1 0.21" radius="0.05" color="#00ff00"></a-sphere>
+              <a-cylinder position="0 0.3 0" radius="0.01" height="0.2" color="#ccc"></a-cylinder>
+            </a-box>
+            <a-cylinder position="0 -0.4 0" radius="0.2" height="0.5" color="#333"></a-cylinder>
+          </a-entity>
 
-          <a-text value="MAQUINA: 867-M\nMOTOR: Direct Drive\nSTATUS: OPERACIONAL" 
-                  position="-1.7 1.3 0.2" align="left" width="4.2" color="#FFFFFF" font="roboto"></a-text>
-
-          <a-text value="REGISTO SAP: 123456\nLUBRIFICACAO: OK" 
-                  position="0.3 1.3 0.2" align="left" width="4.2" color="#5cdb5c" font="roboto"></a-text>
-
-          <a-plane position="0 0.45 0.05" width="3.6" height="0.3" color="#ff6600"
-                   animation="property: material.opacity; from: 1; to: 0.4; dir: alternate; dur: 1000; loop: true">
-          </a-plane>
-          <a-text value="AVISO: PROTECAO DE DEDOS" position="0 0.45 0.2" 
-                  align="center" width="3.5" color="#FFFFFF" font="roboto"></a-text>
-
-          <a-sphere position="1.6 2.2 0.3" radius="0.12" color="#00ff00"
-                    material="emissive: #00ff00; emissiveIntensity: 0.5"
-                    animation="property: material.emissiveIntensity; from: 0.2; to: 2; dir: alternate; dur: 600; loop: true">
-          </a-sphere>
+          <a-text value="SISTEMA INTERATIVO ATIVO\nO ROBOT ESTA A MONITORIZAR" position="0 1.2 0.1" align="center" width="4"></a-text>
 
         </a-entity>
       </a-marker>
       
-      <a-entity camera></a-entity>
+      <a-entity camera id="camera"></a-entity>
     </a-scene>
   </body>
 </html>
