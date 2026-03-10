@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <title>Lectra FX - AR Dashboard</title>
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <style>
@@ -13,17 +14,18 @@
         padding: 15px 10px; background: #0054a6; color: white !important; border-radius: 8px;
         text-decoration: none; font-family: sans-serif; font-weight: bold;
         font-size: 12px; border: 2px solid white; width: 45%; text-align: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
       }
       #instrucao {
         position: fixed; top: 10px; width: 100%; text-align: center;
         color: white; font-family: sans-serif; z-index: 10000;
-        text-shadow: 2px 2px 4px #000;
+        text-shadow: 2px 2px 4px #000; font-weight: bold;
       }
     </style>
   </head>
   <body style="margin: 0px; overflow: hidden;">
 
-    <div id="instrucao">A CARREGAR SISTEMA LECTRA...</div>
+    <div id="instrucao">APONTE PARA O MARCADOR HIRO</div>
 
     <div class="ui-container">
       <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQBZ4crRwZi5SaPNlrUXaOALAVlLRyl3zO363RnZ_VMHLwY?e=VBQuEb" target="_blank" class="btn">📄 PROCESSO</a>
@@ -32,82 +34,90 @@
 
     <a-scene 
       embedded 
-      arjs="debugUIEnabled: false; trackingMethod: best; smooth: true; smoothCount: 15; smoothThreshold: 5;" 
+      arjs="trackingMethod: best; debugUIEnabled: false; smooth: true; smoothCount: 15; smoothThreshold: 5;" 
       renderer="logarithmicDepthBuffer: true; antialias: true; precision: high;"
       cursor="rayOrigin: mouse" 
       raycaster="objects: .clicavel">
       
       <a-assets>
-        <img id="tabela-risco" src="tabela_lectra.png">
+        <img id="tabela-risco" src="tabela_lectra.png" crossorigin="anonymous">
       </a-assets>
 
-      <a-marker preset="hiro" id="marcador" smooth="true" smoothCount="15">
-        <a-entity id="conteudo-principal" rotation="-90 0 0" scale="0 0 0"
-                  animation="property: scale; to: 1 1 1; dur: 800; easing: easeOutElastic; startEvents: targetFound">
+      <a-marker preset="hiro" id="marcador">
+        <a-entity id="conteudo-principal" rotation="-90 0 0" scale="0 0 0">
           
           <a-entity id="main-panel">
-            <a-plane position="0 1.2 0.01" width="3.5" height="0.7" color="#1a1a1a" material="opacity: 0"
-                     animation="property: material.opacity; to: 0.9; dur: 1000; startEvents: targetFound"></a-plane>
-            <a-text value="LECTRA FX" position="0 1.3 0.1" align="center" width="8" color="#FFD700"></a-text>
+            <a-plane position="0 1.8 0.01" width="3.5" height="0.6" color="#1a1a1a" opacity="0.9"></a-plane>
+            <a-text value="LECTRA FX" position="0 1.8 0.1" align="center" width="8" color="#FFD700"></a-text>
+            <a-text value="CORTE DE FIBRA SECA" position="0 1.4 0.1" align="center" width="4" color="#FFFFFF"></a-text>
           </a-entity>
 
-          <a-entity id="tabela-container" class="clicavel" position="3.2 1.2 0.2">
-            <a-plane width="4" height="3" opacity="0" class="clicavel"></a-plane>
+          <a-entity id="tabela-container" class="clicavel" position="0 0 0.2">
+            <a-plane width="3.5" height="2.5" opacity="0" class="clicavel"></a-plane>
             
-            <a-image id="img-fade" src="#tabela-risco" width="3" height="2.2" position="0 0 0.1" material="opacity: 0"
-                     animation="property: material.opacity; to: 1; dur: 1200; startEvents: targetFound"></a-image>
+            <a-image src="#tabela-risco" width="3.2" height="2.2" position="0 0 0.1"></a-image>
             
-            <a-rect width="3.1" height="2.3" position="0 0 0.05" color="#d32f2f" opacity="0"></a-rect>
+            <a-rect width="3.3" height="2.3" position="0 0 0.05" color="#d32f2f" opacity="0.6"></a-rect>
+            
+            <a-text value="TOQUE NA TABELA PARA AMPLIAR" position="0 -1.3 0.1" align="center" width="3.5" color="#FFF"></a-text>
           </a-entity>
+
+          <a-sphere position="1.5 1.8 0.2" radius="0.08" color="#00ff00"
+                    animation="property: material.emissiveIntensity; from: 0.5; to: 2; dir: alternate; dur: 800; loop: true"
+                    material="emissive: #00ff00;"></a-sphere>
 
         </a-entity>
       </a-marker>
       
-      <a-entity camera>
-        <a-cursor fuse="false" raycaster="objects: .clicavel" color="yellow"></a-cursor>
-      </a-entity>
+      <a-entity camera></a-entity>
     </a-scene>
 
     <script>
+      const marcador = document.querySelector('#marcador');
+      const conteudo = document.querySelector('#conteudo-principal');
       const tabela = document.querySelector('#tabela-container');
       const mainPanel = document.querySelector('#main-panel');
       const instrucao = document.querySelector('#instrucao');
-      const conteudo = document.querySelector('#conteudo-principal');
-      const marcador = document.querySelector('#marcador');
       let zoomed = false;
 
-      // Disparar animações de entrada quando o marcador é encontrado
+      // Gestão de entrada e saída do marcador
       marcador.addEventListener('markerFound', () => {
-        conteudo.emit('targetFound');
-        instrucao.innerText = "MARCADOR DETETADO: TOQUE NA TABELA";
-        instrucao.style.color = "white";
+        conteudo.setAttribute('animation', 'property: scale; to: 1 1 1; dur: 600; easing: easeOutBack');
+        instrucao.innerText = "LECTRA FX DETETADA";
+        instrucao.style.color = "#00ff00";
       });
 
       marcador.addEventListener('markerLost', () => {
-        instrucao.innerText = "APONTE PARA O MARCADOR HIRO";
-        instrucao.style.color = "red";
-        // Resetar escala para re-animar na próxima vez
         conteudo.setAttribute('scale', '0 0 0');
+        instrucao.innerText = "APONTE PARA O MARCADOR HIRO";
+        instrucao.style.color = "white";
       });
 
+      // Função de ZOOM
       function executarZoom() {
         if (!zoomed) {
-          tabela.setAttribute('animation', 'property: position; to: 0 1.2 2; dur: 400; easing: easeOutCubic');
-          tabela.setAttribute('animation__scale', 'property: scale; to: 2 2 2; dur: 400');
+          // Move a tabela para o centro e aproxima da câmara (Z=1.5)
+          tabela.setAttribute('animation', 'property: position; to: 0 1 1.5; dur: 500; easing: easeInOutQuad');
+          tabela.setAttribute('animation__scale', 'property: scale; to: 1.8 1.8 1.8; dur: 500');
           mainPanel.setAttribute('visible', 'false');
-          instrucao.innerText = "TOQUE NOVAMENTE PARA SAIR";
           zoomed = true;
+          instrucao.innerText = "MODO DE LEITURA ATIVO";
         } else {
-          tabela.setAttribute('animation', 'property: position; to: 3.2 1.2 0.2; dur: 400; easing: easeOutCubic');
-          tabela.setAttribute('animation__scale', 'property: scale; to: 1 1 1; dur: 400');
+          // Volta para a posição original abaixo do título
+          tabela.setAttribute('animation', 'property: position; to: 0 0 0.2; dur: 500; easing: easeInOutQuad');
+          tabela.setAttribute('animation__scale', 'property: scale; to: 1 1 1; dur: 500');
           mainPanel.setAttribute('visible', 'true');
-          instrucao.innerText = "TOQUE NA TABELA PARA DAR ZOOM";
           zoomed = false;
+          instrucao.innerText = "LECTRA FX DETETADA";
         }
       }
 
+      // Suporte para PC e Telemóvel
       tabela.addEventListener('mousedown', executarZoom);
-      tabela.addEventListener('touchstart', (e) => { e.preventDefault(); executarZoom(); });
+      tabela.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        executarZoom();
+      });
     </script>
   </body>
 </html>
