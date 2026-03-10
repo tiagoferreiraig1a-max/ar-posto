@@ -12,25 +12,32 @@
       .btn {
         padding: 15px 10px; background: #0054a6; color: white !important; border-radius: 8px;
         text-decoration: none; font-family: sans-serif; font-weight: bold;
-        font-size: 12px; border: 2px solid white; width: 48%; text-align: center;
+        font-size: 12px; border: 2px solid white; width: 45%; text-align: center;
       }
-      .btn-risk { background: #d32f2f; }
+      /* Instrução visual para o utilizador */
+      #instrucao {
+        position: fixed; top: 10px; width: 100%; text-align: center;
+        color: white; font-family: sans-serif; z-index: 10000;
+        text-shadow: 2px 2px 4px #000;
+      }
     </style>
   </head>
   <body style="margin: 0px; overflow: hidden;">
 
+    <div id="instrucao">TOQUE NO ROBOT/TABELA PARA DAR ZOOM</div>
+
     <div class="ui-container">
       <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQBZ4crRwZi5SaPNlrUXaOALAVlLRyl3zO363RnZ_VMHLwY?e=VBQuEb" class="btn">📄 PROCESSO</a>
-      <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQA9Uee78FoEQ72zJRhF0MdPAVxAdLq_bJMxkuiPU3iWaks?e=HWBJTo" class="btn btn-risk">⚠️ RISCOS</a>
+      <a href="https://siemensenergyag-my.sharepoint.com/:b:/g/personal/tiago_pinhal_siemens-energy_com/IQA9Uee78FoEQ72zJRhF0MdPAVxAdLq_bJMxkuiPU3iWaks?e=HWBJTo" class="btn" style="background: #d32f2f;">⚠️ RISCOS</a>
     </div>
 
-    <a-scene embedded arjs="debugUIEnabled: false;" cursor="rayOrigin: mouse" raycaster="objects: .clicavel">
+    <a-scene embedded arjs="debugUIEnabled: false; trackingMethod: best;" cursor="rayOrigin: mouse" raycaster="objects: .clicavel">
       
       <a-assets>
         <img id="tabela-risco" src="tabela_lectra.png">
       </a-assets>
 
-      <a-marker preset="hiro">
+      <a-marker preset="hiro" id="marcador">
         <a-entity rotation="-90 0 0">
           
           <a-entity id="main-panel">
@@ -39,47 +46,60 @@
           </a-entity>
 
           <a-entity id="tabela-container" class="clicavel" position="3.2 1.2 0.2">
+            <a-plane width="4" height="3" opacity="0" class="clicavel"></a-plane>
             
-            <a-image id="imagem-risco" src="#tabela-risco" width="3" height="2.2" position="0 0 0.1"></a-image>
-            
-            <a-plane width="3.2" height="2.4" position="0 0 0.05" opacity="0.4" color="#d32f2f"></a-plane>
-
-            <a-text value="CLIQUE PARA ZOOM" position="0 -1.3 0.1" align="center" width="4" color="#FFF"></a-text>
+            <a-image src="#tabela-risco" width="3" height="2.2" position="0 0 0.1"></a-image>
+            <a-rect width="3.1" height="2.3" position="0 0 0.05" color="#d32f2f" opacity="0.6"></a-rect>
           </a-entity>
 
         </a-entity>
       </a-marker>
       
-      <a-entity camera></a-entity>
+      <a-entity camera>
+        <a-cursor fuse="false" raycaster="objects: .clicavel" color="yellow"></a-cursor>
+      </a-entity>
     </a-scene>
 
     <script>
       const tabela = document.querySelector('#tabela-container');
       const mainPanel = document.querySelector('#main-panel');
+      const instrucao = document.querySelector('#instrucao');
       let zoomed = false;
 
-      // Função única para lidar com a animação
-      function toggleZoom() {
+      function executarZoom() {
         if (!zoomed) {
-          // ZOOM IN
-          tabela.setAttribute('animation', 'property: position; to: 0 1.2 1.5; dur: 500; easing: easeOutQuad');
-          tabela.setAttribute('animation__scale', 'property: scale; to: 1.8 1.8 1.8; dur: 500');
+          // ZOOM IN - Traz para a frente da câmara
+          tabela.setAttribute('animation', 'property: position; to: 0 1.2 2; dur: 400; easing: easeOutCubic');
+          tabela.setAttribute('animation__scale', 'property: scale; to: 2 2 2; dur: 400');
           mainPanel.setAttribute('visible', 'false');
+          instrucao.innerText = "TOQUE NOVAMENTE PARA SAIR";
           zoomed = true;
         } else {
-          // ZOOM OUT
-          tabela.setAttribute('animation', 'property: position; to: 3.2 1.2 0.2; dur: 500; easing: easeOutQuad');
-          tabela.setAttribute('animation__scale', 'property: scale; to: 1 1 1; dur: 500');
+          // ZOOM OUT - Volta para a lateral
+          tabela.setAttribute('animation', 'property: position; to: 3.2 1.2 0.2; dur: 400; easing: easeOutCubic');
+          tabela.setAttribute('animation__scale', 'property: scale; to: 1 1 1; dur: 400');
           mainPanel.setAttribute('visible', 'true');
+          instrucao.innerText = "TOQUE NA TABELA PARA DAR ZOOM";
           zoomed = false;
         }
       }
 
-      // IMPORTANTE: Escutar tanto click quanto touch para telemóveis
-      tabela.addEventListener('click', toggleZoom);
+      // Tenta detetar o clique de todas as formas possíveis
+      tabela.addEventListener('mousedown', executarZoom);
       tabela.addEventListener('touchstart', function(e) {
-        e.preventDefault(); // Impede o scroll do browser ao tocar
-        toggleZoom();
+        e.preventDefault();
+        executarZoom();
+      });
+
+      // Feedback visual: se o marcador for perdido, avisa
+      const marcador = document.querySelector('#marcador');
+      marcador.addEventListener('markerLost', () => {
+        instrucao.innerText = "APONTE PARA O MARCADOR HIRO";
+        instrucao.style.color = "red";
+      });
+      marcador.addEventListener('markerFound', () => {
+        instrucao.innerText = "MARCADOR DETETADO: TOQUE NA TABELA";
+        instrucao.style.color = "white";
       });
     </script>
   </body>
